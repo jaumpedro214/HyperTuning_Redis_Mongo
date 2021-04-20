@@ -9,9 +9,19 @@ def insert_requisition( redis_client, hname, params ):
 
 redis_client = redis.Redis()
 
-models = [('10', {"name":"RandomForest", "ntrees":500, "max":20, "metrics":"accuracy", "base":"iris"}),
-          ('11', {"name":"RandomForest", "ntrees":200, "max":20, "metrics":"ABC", "base":"iris"}),
-          ('12', {"name":"RandomForest", "ntrees":100, "max":15, "metrics":"accuracy", "base":"iris"})]
+models = [('10', {"name":"RandomForestRegressor", 
+                  "base":"iris",
+                  "min_samples_split":10, "min_impurity_decrease":1.0000 , 
+                  "metrics":"neg_mean_absolute_error"}),
+          ('11', {"name":"RandomForestRegressor",
+                  "base":"iris", 
+                  "n_estimators":200, "min_samples_split":4, "criterion":"mse", 
+                  "metrics":"neg_mean_squared_error,r2"}),
+          ('12', {"name":"Ridge",
+                  "base":"iris", 
+                  "alpha":0.5, "tol":0.0001,
+                  "metrics":"r2"
+                   })]
 
 for model in models:
     print(model[0], model[1])
