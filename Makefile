@@ -8,7 +8,7 @@ MONGO_CONT_NAME=mongodb_hpt
 MONGO_IMG=mongo
 MONGO_DOC_PORT=27017
 MONGO_LOC_PORT=27017
-MONGO_VOL_DIR = /home/mongo:/data
+MONGO_VOL_DIR = /home/mongo/data
 
 start:
 	docker start $(REDIS_CONT_NAME)
@@ -16,7 +16,7 @@ start:
 
 run:
 	docker run --name $(REDIS_CONT_NAME) -p $(REDIS_LOC_PORT):$(REDIS_DOC_PORT) -d $(REDIS_IMG)
-	docker run --name $(MONGO_CONT_NAME) -p $(MONGO_LOC_PORT):$(MONGO_DOC_PORT) -d $(MONGO_IMG) -v $(MONGO_VOL_DIR)
+	docker run --name $(MONGO_CONT_NAME) -p $(MONGO_LOC_PORT):$(MONGO_DOC_PORT) -v $(MONGO_VOL_DIR) -d $(MONGO_IMG)
 
 stop:
 	docker stop $(REDIS_CONT_NAME)
