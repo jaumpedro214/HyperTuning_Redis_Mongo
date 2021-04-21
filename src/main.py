@@ -46,8 +46,6 @@ def train_model(model, metrics, base):
 
     # Mean of each score list
     cvs_means = { key:np.mean(value) for key,value in cvs.items() }
-    pprint(cvs)
-    pprint(cvs_means)
 
     return cvs_means
 
@@ -84,6 +82,7 @@ def process_model( params ):
                  "date":datetime.datetime.now()
                 }
     pprint(mongo_doc)
+    print(" ")
 
 
 
