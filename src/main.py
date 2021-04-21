@@ -12,6 +12,7 @@ from sklearn.datasets import make_classification, load_iris, load_breast_cancer
 from sklearn.model_selection import train_test_split, cross_validate
 
 from pprint import pprint
+import datetime
 
 # Function to convert string into int, float, string
 def convert_string(s):
@@ -43,11 +44,14 @@ def train_model(model, metrics, base):
     cvs = cross_validate(model, X, y, return_train_score=True,
                          scoring=scorers, cv=4, verbose=1)
 
+    # Mean of each score list
     cvs_means = { key:np.mean(value) for key,value in cvs.items() }
     pprint(cvs)
     pprint(cvs_means)
 
-def create_model( params ):
+    return cvs_means
+
+def process_model( params ):
     assert type(params) == dict
     if params == {}:
         print("Warning: Params dictonary is empty, returning")
@@ -61,8 +65,6 @@ def create_model( params ):
     del params['base']
     del params['metrics']
 
-    print( f"Training {name} on base {base}" )
-
     # Setting ML model
     model = get_model(name)
 
@@ -71,14 +73,20 @@ def create_model( params ):
         params[key] = convert_string(value)
     model.set_params(**params)
 
-    print( f"Evaluating with {metrics}" )
+    # Training/evaluate model
+    scores = train_model(model, metrics, base)
 
-    pprint( model )
-    print(" ")
+    # Building MongoDB entry
+    mongo_doc = {"name":name,
+                 "params":model.get_params(),
+                 "database":base,
+                 "scores":scores,
+                 "date":datetime.datetime.now()
+                }
+    pprint(mongo_doc)
 
-    # Training model
-    train_model(model, metrics, base)
-    
+
+
 # Available Datasets
 datasets = {"diabetes":load_diabetes(return_X_y=True),
             "boston":load_boston(return_X_y=True),
@@ -97,7 +105,7 @@ while True:
         break
     id_requisicao = id_requisicao[1]
 
-    print(f"Requisition ID - {id_requisicao}")
+    print(f"Requisition - {id_requisicao}")
     params = r.hgetall(id_requisicao)
-    create_model( params )
+    process_model( params )
     r.delete(id_requisicao)
