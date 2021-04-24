@@ -1,5 +1,6 @@
 import redis
 import numpy as np
+import pymongo
 
 # Models supported
 from sklearn.linear_model import LinearRegression, Ridge, SGDClassifier, LogisticRegression
@@ -88,7 +89,8 @@ def process_model( params ):
                  "scores":scores,
                  "date":datetime.datetime.now()
                 }
-    pprint(mongo_doc)
+    return (mongo_doc)
+    #pprint(mongo_doc)
     print(" ")
 
 
@@ -103,6 +105,9 @@ datasets = {"diabetes":load_diabetes(return_X_y=True),
 # Connecting to redis client
 r = redis.Redis(decode_responses=True)
 
+# Connecting to mongo client
+m = pymongo.MongoClient('localhost',27017)
+
 while True:
     
     id_requisicao = r.brpop('requisitions-list', 10)
@@ -113,5 +118,7 @@ while True:
 
     print(f"Requisition - {id_requisicao}")
     params = r.hgetall(id_requisicao)
-    process_model( params )
+    m_db = m.mongo_db
+    c_db = m_db.doc_table
+    resultado = c_db.insert_one(process_model( params ))
     r.delete(id_requisicao)
