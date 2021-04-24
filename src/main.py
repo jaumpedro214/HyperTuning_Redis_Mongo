@@ -3,7 +3,8 @@ import numpy as np
 import pymongo
 
 # Models supported
-from sklearn.linear_model import LinearRegression, Ridge, SGDClassifier, LogisticRegression
+from sklearn.svm import SVR, SVC
+from sklearn.linear_model import LinearRegression, Ridge, LogisticRegression
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 
 # Get evaluation metrics
@@ -37,7 +38,8 @@ def get_model(name):
                "RandomForestRegressor":RandomForestRegressor(),
                "RandomForestClassifier":RandomForestClassifier(),
                "LogisticRegression":LogisticRegression(),
-               "SGDClassifier":SGDClassifier(),
+               "SVR":SVR(),
+               "SVC":SVC(),
                 }
     return models[name]
 
@@ -90,9 +92,6 @@ def process_model( params ):
                  "date":datetime.datetime.now()
                 }
     return (mongo_doc)
-    #pprint(mongo_doc)
-    print(" ")
-
 
 
 # Available Datasets
