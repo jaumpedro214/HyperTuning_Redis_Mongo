@@ -1,12 +1,15 @@
 import redis
 import numpy as np
 
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.ensemble import RandomForestRegressor
+# Models supported
+from sklearn.linear_model import LinearRegression, Ridge, SGDClassifier, LogisticRegression
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 
+# Get evaluation metrics
 from sklearn.metrics import get_scorer
 from sklearn.metrics import SCORERS
 
+# Datasets available
 from sklearn.datasets import make_regression, load_boston, load_diabetes
 from sklearn.datasets import make_classification, load_iris, load_breast_cancer
 from sklearn.model_selection import train_test_split, cross_validate
@@ -30,7 +33,11 @@ def get_model(name):
     # Sklearn models mapped by name
     models = { "LinearRegression":LinearRegression(),
                "Ridge":Ridge(),
-               "RandomForestRegressor":RandomForestRegressor() }
+               "RandomForestRegressor":RandomForestRegressor(),
+               "RandomForestClassifier":RandomForestClassifier(),
+               "LogisticRegression":LogisticRegression(),
+               "SGDClassifier":SGDClassifier(),
+                }
     return models[name]
 
 def train_model(model, metrics, base):
