@@ -15,6 +15,8 @@ from sklearn.metrics import SCORERS
 from sklearn.datasets import make_regression, load_boston, load_diabetes
 from sklearn.datasets import make_classification, load_iris, load_breast_cancer
 from sklearn.model_selection import train_test_split, cross_validate
+from sklearn.preprocessing import label_binarize
+import numpy as np
 
 from pprint import pprint
 import datetime
@@ -52,7 +54,7 @@ def train_model(model, metrics, base):
 
     # Cross validation cv = 3
     cvs = cross_validate(model, X, y, return_train_score=True,
-                         scoring=scorers, cv=4, verbose=1)
+                         scoring=scorers, cv=4)
 
     # Mean of each score list
     cvs_means = { key:np.mean(value) for key,value in cvs.items() }
@@ -98,7 +100,7 @@ def process_model( params ):
 datasets = {"diabetes":load_diabetes(return_X_y=True),
             "boston":load_boston(return_X_y=True),
             "iris":load_iris(return_X_y=True),
-            "cancer":load_breast_cancer(return_X_y=True)
+            "breast_cancerd":load_breast_cancer(return_X_y=True)
             }
 
 # Connecting to redis client
@@ -109,14 +111,14 @@ m = pymongo.MongoClient('localhost',27017)
 
 while True:
     
-    id_requisicao = r.brpop('requisitions-list', 10)
+    id_requisicao = r.brpop('requisitions-list', 5*60 )
     if id_requisicao == None:
         print("Shutdown...")
         break
     id_requisicao = id_requisicao[1]
-
-    print(f"Requisition - {id_requisicao}")
+    
     params = r.hgetall(id_requisicao)
+    print(f"Requisition - {id_requisicao} - {params['name']}")
     m_db = m.mongo_db
     c_db = m_db.doc_table
     resultado = c_db.insert_one(process_model( params ))

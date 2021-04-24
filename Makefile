@@ -8,7 +8,7 @@ MONGO_CONT_NAME=mongodb_hpt
 MONGO_IMG=mongo
 MONGO_DOC_PORT=27017
 MONGO_LOC_PORT=27017
-MONGO_VOL_DIR = /home/mongo/data
+MONGO_VOL_DIR = /home/mongodb_hpt:/data
 
 start:
 	docker start $(REDIS_CONT_NAME)
